@@ -1,0 +1,34 @@
+<div ng-controller="ProjectCtrl">
+	<h2 class="sub-header">项目管理</h2>
+
+	<div>
+		<button type="button" class="btn btn-primary">新建</button>
+		<button type="button" class="btn btn-danger">删除</button>
+	</div>
+	<div class="table-responsive">
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th></th>
+					<th>创建时间</th>
+					<th>名称</th>
+					<th>操作</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td><input type="checkbox"></td>
+					<td>2015.1.1</td>
+					<td>啊拉叮帮TA</td>
+					<td>
+						<button type="button" class="btn btn-warning btn-xs">修改</button>
+						<button type="button" class="btn btn-success btn-xs">选择</button>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<div class="text-center">
+			<pagination total-items="totalItems" ng-model="currentPage" ng-change="pageChanged()" max-size="maxSize" class="pagination-sm m-t-none m-b" boundary-links="true" rotate="false" previous-text="上一页" next-text="下一页" first-text="首页" last-text="尾页"></pagination>
+		</div>
+	</div>
+</div>
