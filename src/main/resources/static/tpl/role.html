@@ -1,0 +1,13 @@
+<div ng-controller="RoleCtrl">
+	<h2 class="sub-header">创建/修改角色</h2>
+	<div class="list-group">
+		<label for="authName">名称</label><input type="text" ng-model="ele.name" class="form-control" name="authName" placeholder="输入角色名称">
+	</div>
+	<div class="list-group">
+		<label for="authType">权限</label>
+		<span ng-repeat="role in roles">{{role.name}}</span>
+	</div>
+	<button type="button" class="btn btn-sm btn-primary" ng-click="submitForm()" ng-disabled="loading || ele.name == null || ele.name == ''">
+		<span ng-hide="loading">提交</span> <span ng-show="loading">提交中...</span>
+	</button>
+</div>

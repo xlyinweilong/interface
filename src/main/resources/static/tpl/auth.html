@@ -1,0 +1,29 @@
+<div ng-controller="AuthCtrl">
+	<h2 class="sub-header">创建/修改权限</h2>
+	<div class="list-group">
+		<label for="authName">名称</label><input type="text" ng-model="ele.name" class="form-control" name="authName" placeholder="输入权限名称">
+	</div>
+	<div class="list-group">
+		<label for="authClassName">ClassName</label><input type="text" ng-model="ele.className" class="form-control" name="authClassName" placeholder="输入ClassName">
+	</div>
+	<div class="list-group">
+		<label for="authMethodName">MethodName</label><input type="text" ng-model="ele.methodName" class="form-control" name="authMethodName" placeholder="输入MethodName">
+	</div>
+	<div class="list-group">
+		<label for="authType">类型</label> 
+		<select name="authType" class="form-control" ng-model="ele.type">
+			<option value="USER_MENU">用户菜单</option>
+			<option value="USER_ACTION">用户操作</option>
+			<option value="ADMIN_MENU">管理员菜单</option>
+			<option value="ADMIN_ACTION">管理员操作</option>
+			<option value="ROOT_MENU">系统管理员菜单</option>
+			<option value="ROOT_ACTION">系统管理员操作</option>
+		</select>
+	</div>
+	<div class="list-group">
+		<label for="authUrl">url</label><input type="text" ng-model="ele.url" class="form-control" name="authUrl" placeholder="输入url">
+	</div>
+	<button type="button" class="btn btn-sm btn-primary" ng-click="submitForm()" ng-disabled="loading || ele.name == null || ele.name == ''">
+		<span ng-hide="loading">提交</span> <span ng-show="loading">提交中...</span>
+	</button>
+</div>

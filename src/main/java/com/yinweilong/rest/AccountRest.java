@@ -187,6 +187,20 @@ public class AccountRest {
 	}
 
 	/**
+	 * 所有权限
+	 * 
+	 * @return
+	 */
+	@AccessRequired
+	@RequestMapping(value = "/auth_all", method = RequestMethod.GET)
+	public BaseJson authAll() {
+		List<String> types = new ArrayList<>();
+		types.add(AuthType.USER_ACTION.name());
+		types.add(AuthType.USER_MENU.name());
+		return new BaseJson(1, authRepository.findByTypeIn(types));
+	}
+
+	/**
 	 * 批量删除权限
 	 * 
 	 * @param ids

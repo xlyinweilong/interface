@@ -20,6 +20,18 @@ var app = angular.module('imApp', [ 'ngCookies', 'ui.router', 'ui.bootstrap' ]).
 	}).state('app.auth', {
 		url : '/auth/:id',
 		templateUrl : 'tpl/auth.html'
+	}).state('app.role_list', {
+		url : '/role_list',
+		templateUrl : 'tpl/role_list.html'
+	}).state('app.role', {
+		url : '/role/:id',
+		templateUrl : 'tpl/role.html'
+	}).state('app.user_list', {
+		url : '/user_list',
+		templateUrl : 'tpl/user_list.html'
+	}).state('app.user', {
+		url : '/user/:id',
+		templateUrl : 'tpl/user.html'
 	})
 } ]);
 
@@ -203,6 +215,153 @@ app.controller('AuthCtrl', function($scope, $http, $state, $modal, $stateParams)
 	if ($scope.eleId != null && $scope.eleId != "") {
 		$scope.getInfo();
 	}
+
+	$scope.submitForm = function() {
+		$scope.loading = true;
+		$http.post("/account/auth", $scope.ele).success(function(responseData) {
+			if (responseData.success !== 1) {
+				$.scojs_message(responseData.msg, $.scojs_message.TYPE_ERROR);
+				if (responseData.success == -1) {
+					$state.go('signin');
+				}
+			} else {
+				$scope.ele = responseData.data;
+				$.scojs_message(responseData.msg, $.scojs_message.TYPE_OK);
+				$state.go('app.auth_list');
+			}
+			$scope.loading = false;
+		});
+	}
+
+});
+
+app.controller('RoleListCtrl', function($scope, $http, $state, $modal) {
+	$scope.list = null;
+	$scope.loading = false;
+
+	$scope.pageChanged = function() {
+		$scope.getList($scope.currentPage, false);
+	}
+
+	/**
+	 * pagination
+	 */
+	$scope.totalItems = 0;
+	$scope.currentPage = 1;
+
+	$scope.getList = function(page, init) {
+		$scope.loading = true;
+		if (init) {
+			// init
+		}
+		$scope.currentPage = page;
+		$http.get("/account/role_list?pageNumber=" + $scope.currentPage).success(function(responseData) {
+			if (responseData.success != 1) {
+				$.scojs_message(responseData.msg, $.scojs_message.TYPE_ERROR);
+				if (responseData.success == -1) {
+					$state.go('signin');
+				}
+			} else {
+				$scope.list = responseData.data.content;
+				$scope.totalItems = responseData.data.totalElements;
+			}
+			$scope.loading = false;
+		});
+	}
+	$scope.getList(1, true);
+
+	$scope.add = function() {
+		$state.go('app.role');
+	}
+
+	$scope.editEle = function(id) {
+		$state.go('app.role', {
+			id : id
+		});
+	}
+
+	$scope.deleteEles = function() {
+		var checkeds = [];
+		for (var i = 0; i < $scope.list.length; i++) {
+			if ($scope.list[i].checkbox) {
+				checkeds.push($scope.list[i].id);
+			}
+		}
+		if (checkeds.length < 1) {
+			$.scojs_message("请选择一个要删除的对象", $.scojs_message.TYPE_ERROR);
+		} else {
+			$modal.open({
+				templateUrl : 'tpl/confirm.html',
+				controller : 'ConfirmCtrl',
+				resolve : {
+					modal : function() {
+						return {
+							title : "删除确认",
+							content : "确定要删除已经选定的内容吗？",
+							ok : "确定",
+							cancel : "取消"
+						};
+					}
+				}
+			}).result.then(function(confirm) {
+				if (confirm) {
+					$scope.loading = true;
+					$http.put("/account/role_delete", checkeds).success(function(responseData) {
+						if (responseData.success !== 1) {
+							$.scojs_message(responseData.msg, $.scojs_message.TYPE_ERROR);
+							if (responseData.success == -1) {
+								$state.go('signin');
+							}
+						} else {
+							$scope.pageChanged();
+						}
+						$scope.loading = false;
+					});
+				}
+			});
+		}
+
+	}
+});
+
+app.controller('RoleCtrl', function($scope, $http, $state, $modal, $stateParams) {
+	$scope.ele = {
+		id : null,
+		type : "USER_MENU"
+	};
+	$scope.loading = false;
+	$scope.eleId = $stateParams.id;
+	$scope.getInfo = function() {
+		$scope.loading = true;
+		$http.get("/account/auth/" + $scope.eleId).success(function(responseData) {
+			if (responseData.success !== 1) {
+				$.scojs_message(responseData.msg, $.scojs_message.TYPE_ERROR);
+				if (responseData.success == -1) {
+					$state.go('signin');
+				}
+			} else {
+				$scope.ele = responseData.data;
+			}
+			$scope.loading = false;
+		});
+	};
+
+	if ($scope.eleId != null && $scope.eleId != "") {
+		$scope.getInfo();
+	}
+
+	$scope.roles = [];
+
+	$http.get("/account/auth_all").success(function(responseData) {
+		if (responseData.success !== 1) {
+			$.scojs_message(responseData.msg, $.scojs_message.TYPE_ERROR);
+			if (responseData.success == -1) {
+				$state.go('signin');
+			}
+		} else {
+			$scope.roles = responseData.data;
+		}
+	});
 
 	$scope.submitForm = function() {
 		$scope.loading = true;
