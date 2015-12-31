@@ -6,7 +6,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import com.yinweilong.support.UserType;
+import com.yinweilong.support.enums.UserType;
 
 /**
  * 用户

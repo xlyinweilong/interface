@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 /**
  * 角色
@@ -11,17 +13,19 @@ import org.springframework.data.annotation.Id;
  * @author yin.weilong
  *
  */
+@Document(collection = "role")
 public class Role {
 
 	@Id
 	// 数据库生成的ID
 	private String id;
 	// 数据生成时间
+	@Indexed(unique = false)
 	private Date createDate = new Date();
 	// 角色姓名
 	private String name;
 	// 角色的权限
-	private List<String> authNames; 
+	private List<String> authIds;
 	
 
 	public String getId() {
@@ -48,12 +52,12 @@ public class Role {
 		this.name = name;
 	}
 
-	public List<String> getAuthNames() {
-		return authNames;
+	public List<String> getAuthIds() {
+		return authIds;
 	}
 
-	public void setAuthNames(List<String> authNames) {
-		this.authNames = authNames;
+	public void setAuthIds(List<String> authIds) {
+		this.authIds = authIds;
 	}
 
 }

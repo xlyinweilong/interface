@@ -25,6 +25,11 @@ public class InterfaceManageApplication extends WebMvcConfigurerAdapter implemen
 	@Autowired
 	private UserAccessApiInterceptor userAccessApiInterceptor;
 
+	/**
+	 * 函数入口
+	 * 
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		SpringApplication.run(InterfaceManageApplication.class, args);
 	}

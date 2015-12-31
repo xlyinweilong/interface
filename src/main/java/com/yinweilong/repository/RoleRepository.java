@@ -11,4 +11,6 @@ import com.yinweilong.entity.Role;
 public interface RoleRepository extends MongoRepository<Role, String> {
 
 	Page<Role> findAll(Pageable pageable);
+
+	void deleteByIdIn(String[] ids);
 }

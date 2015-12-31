@@ -1,6 +1,9 @@
 package com.yinweilong.service;
 
+import javax.annotation.Resource;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
 import com.yinweilong.entity.User;
@@ -12,6 +15,8 @@ public class AccountService {
 
 	@Autowired
 	private UserRepository userRepository;
+	@Resource
+	private MongoTemplate mongoTemplate;
 
 	/**
 	 * 产生用户的accessToken
@@ -30,6 +35,6 @@ public class AccountService {
 	public void produceUserSecurity(User user) {
 		user.setSecurity(Tools.generateRandomNumber(8));
 	}
-
+	
 
 }

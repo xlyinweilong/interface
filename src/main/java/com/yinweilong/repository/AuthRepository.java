@@ -10,5 +10,10 @@ import com.yinweilong.entity.Auth;
 
 public interface AuthRepository extends MongoRepository<Auth, String> {
 
-	Page<Auth> findAll(Pageable pageable);
+	List<Auth> findByTypeIn(List<String> types);
+
+	void deleteByIdIn(String[] ids);
+
+	Auth findByClassNameAndMethodName(String className, String methodName);
+
 }

@@ -9,6 +9,11 @@ public class BaseJson {
 		super();
 	}
 
+	public BaseJson(int success) {
+		super();
+		this.success = success;
+	}
+
 	public BaseJson(int success, Object data) {
 		super();
 		this.success = success;

@@ -1,14 +1,55 @@
 package com.yinweilong.support;
 
+import java.io.IOException;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import flexjson.JSONSerializer;
 
 public class Tools {
+
+	/**
+	 * 把Object转换为json
+	 * 
+	 * @param o
+	 * @return
+	 */
+	public static String caseObjectToJson(Object o) {
+		JSONSerializer serializer = new JSONSerializer();
+		return serializer.deepSerialize(o);
+	}
+
+	/****************************************************************
+	 ********************** 字符串处理********************************
+	 ****************************************************************
+	 */
+
+	/**
+	 * 判断字符串是否为空
+	 * 
+	 * @param src
+	 * @return
+	 */
+	public static boolean isBlank(String src) {
+		return StringUtils.isBlank(src);
+	}
+
+	/**
+	 * 判断字符是否不为空
+	 * 
+	 * @param src
+	 * @return
+	 */
+	public static boolean isNotBlank(String src) {
+		return StringUtils.isNotBlank(src);
+	}
+
 	/**
 	 * 普通MD5加密
 	 * 
@@ -44,20 +85,43 @@ public class Tools {
 	public static String generateRandomNumber(int length) {
 		return RandomStringUtils.randomNumeric(length);
 	}
-	
+
 	/**
-	 * 把Object转换为json
+	 * 获取用户IP地址
 	 * 
-	 * @param o
+	 * @param request
 	 * @return
+	 * @throws IOException
 	 */
-	public static String caseObjectToJson(Object o) {
-        JSONSerializer serializer = new JSONSerializer();
-        return serializer.deepSerialize(o);
-    }
-	
-	public static void main(String agrs[]){
-		System.out.println(md5WithYin("qqqqqq"));
-		
+	public final static String getIpAddress(HttpServletRequest request) throws IOException {
+		String ip = request.getHeader("X-Forwarded-For");
+		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+			if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+				ip = request.getHeader("Proxy-Client-IP");
+			}
+			if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+				ip = request.getHeader("WL-Proxy-Client-IP");
+			}
+			if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+				ip = request.getHeader("HTTP_CLIENT_IP");
+			}
+			if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+				ip = request.getHeader("HTTP_X_FORWARDED_FOR");
+			}
+			if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+				ip = request.getRemoteAddr();
+			}
+		} else if (ip.length() > 15) {
+			String[] ips = ip.split(",");
+			for (int index = 0; index < ips.length; index++) {
+				String strIp = (String) ips[index];
+				if (!("unknown".equalsIgnoreCase(strIp))) {
+					ip = strIp;
+					break;
+				}
+			}
+		}
+		return ip;
 	}
+
 }
