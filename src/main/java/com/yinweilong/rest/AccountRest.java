@@ -26,6 +26,7 @@ import com.yinweilong.interceptor.AccessRequired;
 import com.yinweilong.json.BaseJson;
 import com.yinweilong.repository.*;
 import com.yinweilong.service.AccountService;
+import com.yinweilong.support.SerializedField;
 import com.yinweilong.support.Tools;
 import com.yinweilong.support.enums.AuthType;
 import com.yinweilong.support.enums.UserType;
@@ -98,6 +99,7 @@ public class AccountRest {
 	 */
 	@AccessRequired
 	@RequestMapping(value = "/user_auth", method = RequestMethod.GET)
+	@SerializedField(includes = { "id", "email" }, encode = false)
 	public BaseJson userAuth(@CookieValue(value = "accessToken", required = true) String accessToken) {
 		BaseJson bj = new BaseJson();
 		List<String> types = new ArrayList<>();
