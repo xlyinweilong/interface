@@ -52,6 +52,8 @@ public class UserAccessApiInterceptor extends HandlerInterceptorAdapter {
 		if (annotation != null) {
 			response.setStatus(401);
 			BaseJson bj = new BaseJson();
+			bj.setSuccess(0);
+			bj.setMsg("权限不足");
 			Cookie[] cookies = request.getCookies();
 			String accessToken = null;
 			for (int i = 0; cookies != null && i < cookies.length; i++) {
@@ -75,19 +77,19 @@ public class UserAccessApiInterceptor extends HandlerInterceptorAdapter {
 							Auth auth = authRepository.findByClassNameAndMethodName(handlerMethod.getBean().getClass().getSimpleName(), method.getName());
 							if (user.getType().equals(UserType.ROOT.name())) {
 								if (!(auth.getType().equals(AuthType.ROOT_MENU.name()) || auth.getType().equals(AuthType.ROOT_ACTION.name()))) {
-									response.setStatus(401);
+									response.getWriter().write(Tools.caseObjectToJson(bj));
 									return false;
 								}
 							} else if (user.getType().equals(UserType.ADMIN.name())) {
 								if (auth.getType().equals(AuthType.ROOT_MENU.name()) || auth.getType().equals(AuthType.ROOT_ACTION.name())) {
-									response.setStatus(401);
+									response.getWriter().write(Tools.caseObjectToJson(bj));
 									return false;
 								}
 							} else {
 								Role role = roleRepository.findOne(user.getRoleId());
 								List<Auth> auths = (List<Auth>) authRepository.findAll(role.getAuthIds());
 								if (!auths.contains(auth)) {
-									response.setStatus(401);
+									response.getWriter().write(Tools.caseObjectToJson(bj));
 									return false;
 								}
 							}
