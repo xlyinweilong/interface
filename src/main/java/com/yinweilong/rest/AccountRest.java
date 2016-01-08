@@ -1,15 +1,10 @@
 package com.yinweilong.rest;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,10 +18,10 @@ import com.yinweilong.entity.Auth;
 import com.yinweilong.entity.Role;
 import com.yinweilong.entity.User;
 import com.yinweilong.interceptor.AccessRequired;
+import com.yinweilong.interceptor.SerializedField;
 import com.yinweilong.json.BaseJson;
 import com.yinweilong.repository.*;
 import com.yinweilong.service.AccountService;
-import com.yinweilong.support.SerializedField;
 import com.yinweilong.support.Tools;
 import com.yinweilong.support.enums.AuthType;
 import com.yinweilong.support.enums.UserType;
@@ -57,6 +52,7 @@ public class AccountRest {
 	 * @return
 	 */
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
+	@SerializedField(includes = { "accessToken" })
 	public BaseJson login(@RequestBody User user) {
 		BaseJson bj = new BaseJson();
 		User dbUser = userRepository.findByAccount(user.getAccount());
@@ -66,10 +62,8 @@ public class AccountRest {
 			accountService.produceUserSession(dbUser);
 			accountService.produceUserSecurity(dbUser);
 			userRepository.save(dbUser);
-			Map<String, Object> map = new HashMap<>();
-			// 返回用户的accessToken和用户的签名密码，用HTTPS回传给客户端
-			map.put("accessToken", dbUser.getAccessToken());
-			bj.setData(map);
+			// 用HTTPS回传给客户端
+			bj.setData(dbUser);
 			bj.setSuccess(1);
 		}
 		return bj;
@@ -99,7 +93,7 @@ public class AccountRest {
 	 */
 	@AccessRequired
 	@RequestMapping(value = "/user_auth", method = RequestMethod.GET)
-	@SerializedField(includes = { "id", "email" }, encode = false)
+	@SerializedField(includes = { "className", "methodName", "name", "type", "url" })
 	public BaseJson userAuth(@CookieValue(value = "accessToken", required = true) String accessToken) {
 		BaseJson bj = new BaseJson();
 		List<String> types = new ArrayList<>();
@@ -134,8 +128,9 @@ public class AccountRest {
 	 */
 	@AccessRequired
 	@RequestMapping(value = "/user_list", method = RequestMethod.GET)
+	@SerializedField(includes = { "id", "account", "name", "createDate" })
 	public BaseJson userList(@RequestParam(value = "pageNumber", defaultValue = "1") int pageNumber, @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
-		return new BaseJson(1, userRepository.findAll(new PageRequest(pageNumber, pageSize)));
+		return new BaseJson(1, userRepository.findAll(new PageRequest(pageNumber - 1, pageSize)));
 	}
 
 	/**
@@ -159,8 +154,9 @@ public class AccountRest {
 	 */
 	@AccessRequired
 	@RequestMapping(value = "/user/{id}", method = RequestMethod.GET)
+	@SerializedField(includes = { "id", "account", "name", "roleId" })
 	public BaseJson userGet(@PathVariable String id) {
-		return new BaseJson(1, authRepository.findOne(id));
+		return new BaseJson(1, userRepository.findOne(id));
 	}
 
 	/**
@@ -171,7 +167,32 @@ public class AccountRest {
 	 */
 	@AccessRequired
 	@RequestMapping(value = "/user", method = RequestMethod.POST)
+	@SerializedField(includes = { "id", "account", "name", "roleId" })
 	public BaseJson user(@RequestBody User user) {
+		if (user.getId() == null) {
+			if (Tools.isBlank(user.getAccount())) {
+				return new BaseJson(1, "请输入用户账号", null);
+			} else if (userRepository.findByAccount(user.getAccount()) != null) {
+				return new BaseJson(1, "该账号已经存在", null);
+			}
+			if (Tools.isBlank(user.getPasswd())) {
+				return new BaseJson(1, "请输入密码", null);
+			} else {
+				user.setPasswd(Tools.md5WithYin(user.getPasswd()));
+			}
+		} else {
+			User dbUser = userRepository.findOne(user.getId());
+			if (Tools.isBlank(user.getAccount())) {
+				return new BaseJson(1, "请输入用户账号", null);
+			} else if (!dbUser.getAccount().equals(user.getAccount()) & userRepository.findByAccount(user.getAccount()) != null) {
+				return new BaseJson(1, "该账号已经存在", null);
+			}
+			if (Tools.isBlank(user.getPasswd())) {
+				user.setPasswd(dbUser.getPasswd());
+			} else {
+				user.setPasswd(Tools.md5WithYin(user.getPasswd()));
+			}
+		}
 		return new BaseJson(1, user.getId() == null ? "创建成功" : "修改成功", user.getId() == null ? userRepository.insert(user) : userRepository.save(user));
 	}
 
@@ -184,6 +205,7 @@ public class AccountRest {
 	 */
 	@AccessRequired
 	@RequestMapping(value = "/auth_list", method = RequestMethod.GET)
+	@SerializedField(includes = { "id", "createDate", "name", "type" })
 	public BaseJson authList(@RequestParam(value = "pageNumber", defaultValue = "1") int pageNumber, @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
 		return new BaseJson(1, authRepository.findAll(new PageRequest(pageNumber - 1, pageSize, new Sort(Sort.Direction.DESC, "createDate"))));
 	}
@@ -195,6 +217,7 @@ public class AccountRest {
 	 */
 	@AccessRequired
 	@RequestMapping(value = "/auth_all", method = RequestMethod.GET)
+	@SerializedField(includes = { "id", "createDate", "name", "className", "methodName", "type", "url" })
 	public BaseJson authAll() {
 		List<String> types = new ArrayList<>();
 		types.add(AuthType.USER_ACTION.name());
@@ -223,6 +246,7 @@ public class AccountRest {
 	 */
 	@AccessRequired
 	@RequestMapping(value = "/auth/{id}", method = RequestMethod.GET)
+	@SerializedField(includes = { "id", "createDate", "name", "className", "methodName", "type", "url" })
 	public BaseJson authGet(@PathVariable String id) {
 		return new BaseJson(1, authRepository.findOne(id));
 	}
@@ -235,6 +259,7 @@ public class AccountRest {
 	 */
 	@AccessRequired
 	@RequestMapping(value = "/auth", method = RequestMethod.POST)
+	@SerializedField(includes = { "id", "createDate", "name", "className", "methodName", "type", "url" })
 	public BaseJson auth(@RequestBody Auth auth) {
 		return new BaseJson(1, auth.getId() == null ? "创建成功" : "修改成功", auth.getId() == null ? authRepository.insert(auth) : authRepository.save(auth));
 	}
@@ -248,6 +273,7 @@ public class AccountRest {
 	 */
 	@AccessRequired
 	@RequestMapping(value = "/role_list", method = RequestMethod.GET)
+	@SerializedField(includes = { "id", "createDate", "name", "authIds" })
 	public BaseJson roleList(@RequestParam(value = "pageNumber", defaultValue = "1") int pageNumber, @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
 		return new BaseJson(1, roleRepository.findAll(new PageRequest(pageNumber - 1, pageSize, new Sort(Sort.Direction.DESC, "createDate"))));
 	}
@@ -261,7 +287,7 @@ public class AccountRest {
 	@AccessRequired
 	@RequestMapping(value = "/role_delete", method = RequestMethod.PUT)
 	public BaseJson roleDeleted(@RequestBody String[] ids) {
-		if (userRepository.findCountByRoleIdIn(ids) > 0) {
+		if (userRepository.countByroleIdIn(ids) > 0) {
 			return new BaseJson(0, "删除的角色含有用户", null);
 		}
 		roleRepository.deleteByIdIn(ids);
@@ -276,6 +302,7 @@ public class AccountRest {
 	 */
 	@AccessRequired
 	@RequestMapping(value = "/role/{id}", method = RequestMethod.GET)
+	@SerializedField(includes = { "id", "createDate", "name", "authIds" })
 	public BaseJson roleGet(@PathVariable String id) {
 		return new BaseJson(1, roleRepository.findOne(id));
 	}
@@ -288,6 +315,7 @@ public class AccountRest {
 	 */
 	@AccessRequired
 	@RequestMapping(value = "/role", method = RequestMethod.POST)
+	@SerializedField(includes = { "id", "createDate", "name", "authIds" })
 	public BaseJson role(@RequestBody Role role) {
 		return new BaseJson(1, role.getId() == null ? "创建成功" : "修改成功", role.getId() == null ? roleRepository.insert(role) : roleRepository.save(role));
 	}

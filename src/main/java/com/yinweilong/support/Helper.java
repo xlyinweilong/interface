@@ -1,7 +1,7 @@
 package com.yinweilong.support;
 
 public class Helper {
-	private static String key = "wow!@#$%";
+	private static String key = "yinweilong";
 
 	public static boolean isStringInArray(String str, String[] array) {
 		for (String val : array) {

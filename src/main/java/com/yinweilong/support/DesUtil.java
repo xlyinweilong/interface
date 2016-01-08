@@ -14,14 +14,6 @@ import sun.misc.BASE64Encoder;
 public class DesUtil {
 	private final static String DES = "DES";
 
-	public static void main(String[] args) throws Exception {
-		String data = "123 456";
-		String key = "wow!@#$%";
-		System.err.println(encrypt(data, key));
-		System.err.println(decrypt(encrypt(data, key), key));
-
-	}
-
 	/**
 	 * Description 根据键值进行加密
 	 * 

@@ -1,34 +1,15 @@
 <div ng-controller="ProjectCtrl">
-	<h2 class="sub-header">项目管理</h2>
-
-	<div>
-		<button type="button" class="btn btn-primary">新建</button>
-		<button type="button" class="btn btn-danger">删除</button>
+	<h2 class="sub-header">创建/修改项目</h2>
+	<div class="list-group">
+		<label for="eleName">名称</label><input type="text" ng-model="ele.name" class="form-control" name="eleName" placeholder="输入项目名称">
 	</div>
-	<div class="table-responsive">
-		<table class="table table-striped">
-			<thead>
-				<tr>
-					<th></th>
-					<th>创建时间</th>
-					<th>名称</th>
-					<th>操作</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr>
-					<td><input type="checkbox"></td>
-					<td>2015.1.1</td>
-					<td>啊拉叮帮TA</td>
-					<td>
-						<button type="button" class="btn btn-warning btn-xs">修改</button>
-						<button type="button" class="btn btn-success btn-xs">选择</button>
-					</td>
-				</tr>
-			</tbody>
-		</table>
-		<div class="text-center">
-			<pagination total-items="totalItems" ng-model="currentPage" ng-change="pageChanged()" max-size="maxSize" class="pagination-sm m-t-none m-b" boundary-links="true" rotate="false" previous-text="上一页" next-text="下一页" first-text="首页" last-text="尾页"></pagination>
-		</div>
+	<div class="list-group">
+		<label for="baseUrl">根目录</label><input type="text" ng-model="ele.baseUrl" class="form-control" name="baseUrl" placeholder="https://">
 	</div>
+	<div class="list-group">
+		<label for="baseUrlDemo">测试根目录</label><input type="text" ng-model="ele.baseUrlDemo" class="form-control" name="baseUrlDemo" placeholder="http://">
+	</div>
+	<button type="button" class="btn btn-sm btn-primary" ng-click="submitForm()" ng-disabled="loading || ele.name == null || ele.name == ''">
+		<span ng-hide="loading">提交</span> <span ng-show="loading">提交中...</span>
+	</button>
 </div>

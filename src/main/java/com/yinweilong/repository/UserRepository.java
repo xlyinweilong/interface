@@ -2,10 +2,8 @@ package com.yinweilong.repository;
 
 import java.util.List;
 
-import org.springframework.core.annotation.Order;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 
@@ -15,15 +13,15 @@ public interface UserRepository extends MongoRepository<User, String> {
 
 	List<User> findByName(String name);
 
-	long findCountByRoleIdIn(String[] roleIds);
-
-	void deleteByIdIn(String[] ids);
+	long countByroleIdIn(String[] roleIds);
 
 	User findByAccount(String account);
 
 	User findByAccessToken(String accessToken);
+	
+	void deleteByIdIn(String[] ids);
 
-	@Query("{ deleted:false }")
+	@Query("{'type' : 'USER'}")
 	Page<User> findAll(Pageable pageable);
 
 }

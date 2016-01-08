@@ -10,9 +10,13 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @SpringApplicationConfiguration(classes = InterfaceManageApplication.class)
 @WebAppConfiguration
 public class InterfaceManageApplicationTests {
+	
+	public static final String baseUrl = "http://localhost:8080";
+	
 
 	@Test
 	public void contextLoads() {
+		
 	}
 
 }

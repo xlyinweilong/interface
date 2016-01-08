@@ -8,9 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
@@ -27,7 +24,7 @@ import com.yinweilong.support.enums.AuthType;
 import com.yinweilong.support.enums.UserType;
 
 /**
- * 用戶身份
+ * 用戶身份拦截器
  * 
  * @author yin.weilong
  *
@@ -48,9 +45,7 @@ public class UserAccessApiInterceptor extends HandlerInterceptorAdapter {
 		HandlerMethod handlerMethod = (HandlerMethod) handler;
 		Method method = handlerMethod.getMethod();
 		AccessRequired annotation = method.getAnnotation(AccessRequired.class);
-		String ip = Tools.getIpAddress(request);
 		if (annotation != null) {
-			response.setStatus(401);
 			BaseJson bj = new BaseJson();
 			bj.setSuccess(0);
 			bj.setMsg("权限不足");
@@ -94,11 +89,11 @@ public class UserAccessApiInterceptor extends HandlerInterceptorAdapter {
 								}
 							}
 						}
-						response.setStatus(200);
 						return true;
 					}
 				}
 			}
+			response.setStatus(401);
 			request.getRequestDispatcher("/401.html").forward(request, response);
 			return false;
 		}

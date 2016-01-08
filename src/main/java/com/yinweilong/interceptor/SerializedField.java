@@ -1,4 +1,4 @@
-package com.yinweilong.support;
+package com.yinweilong.interceptor;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -29,5 +29,5 @@ public @interface SerializedField {
 	 * 
 	 * @return
 	 */
-	boolean encode() default true;
+	boolean encode() default false;
 }

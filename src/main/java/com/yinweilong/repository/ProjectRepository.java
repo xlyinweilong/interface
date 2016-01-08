@@ -1,14 +1,19 @@
 package com.yinweilong.repository;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-import com.yinweilong.entity.Role;
+import com.yinweilong.entity.Project;
 
-public interface RoleRepository extends MongoRepository<Role, String> {
+public interface ProjectRepository extends MongoRepository<Project, String> {
 
-	Page<Role> findAll(Pageable pageable);
+	List<Project> findByName(String name);
 
 	void deleteByIdIn(String[] ids);
+
+	Page<Project> findAll(Pageable pageable);
+
 }

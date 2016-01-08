@@ -4,11 +4,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-import com.yinweilong.entity.Role;
+import com.yinweilong.entity.Interface;
 
-public interface RoleRepository extends MongoRepository<Role, String> {
+public interface InterfaceRepository extends MongoRepository<Interface, String> {
 
-	Page<Role> findAll(Pageable pageable);
+	Page<Interface> findByProjectId(String projectId, Pageable pageable);
 
 	void deleteByIdIn(String[] ids);
+
 }

@@ -1,8 +1,8 @@
 <div ng-controller="RoleListCtrl">
 	<h2 class="sub-header">角色管理</h2>
 	<div>
-		<button type="button" class="btn btn-primary" ng-click="add()" ng-disabled="list == null || loading">新建</button>
-		<button type="button" class="btn btn-danger" ng-click="deleteEles()" ng-disabled="list == null || loading || totalItems < 1">删除</button>
+		<button ng-if="auth.indexOf('AccountRest_role') != -1" type="button" class="btn btn-primary" ng-click="add()" ng-disabled="list == null || loading">新建</button>
+		<button ng-if="auth.indexOf('AccountRest_roleDeleted') != -1" type="button" class="btn btn-danger" ng-click="deleteEles()" ng-disabled="list == null || loading || totalItems < 1">删除</button>
 	</div>
 	<div class="table-responsive">
 		<div class="text-center" ng-show="list == null || loading">加载中...</div>
@@ -24,7 +24,7 @@
 					<td>{{ele.createDate|date:'yyyy-MM-dd'}}</td>
 					<td>{{ele.name}}</td>
 					<td>
-						<button type="button" class="btn btn-warning btn-xs" ng-click="editEle(ele.id)" ng-disabled="loading">修改</button>
+						<button ng-if="auth.indexOf('AccountRest_role') != -1 && auth.indexOf('AccountRest_roleGet') != -1" type="button" class="btn btn-warning btn-xs" ng-click="editEle(ele.id)" ng-disabled="loading">修改</button>
 					</td>
 				</tr>
 			</tbody>

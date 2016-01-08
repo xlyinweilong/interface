@@ -1,0 +1,48 @@
+<div ng-controller="InterfaceCtrl">
+	<h2 class="sub-header">创建/修改接口</h2>
+	<div class="list-group">
+		<label for="eleName">名称</label><input type="text" ng-model="ele.name" class="form-control" name="eleName" placeholder="输入接口名称">
+	</div>
+	<div class="list-group">
+		<label for="url">资源路径</label><input type="text" ng-model="ele.url" class="form-control" name="url" placeholder="account/list">
+	</div>
+	<div class="list-group">
+		<label for="methodType">方式</label> <select name="methodType" class="form-control" ng-model="ele.methodType">
+			<option value="GET">GET</option>
+			<option value="POST">POST</option>
+			<option value="PUT">PUT</option>
+			<option value="DELETE">DELETE</option>
+		</select>
+	</div>
+	<div class="list-group" ng-show="ele.methodType == 'POST' || ele.methodType == 'PUT'">
+		<label for="consumption">消费格式</label> <select name="consumption" class="form-control" ng-model="ele.consumption">
+			<option value="APPLICATION_FORM_URLENCODED">APPLICATION_FORM_URLENCODED</option>
+			<option value="APPLICATION_JSON">APPLICATION_JSON</option>
+			<option value="MULTIPART_FORM_DATA">MULTIPART_FORM_DATA</option>
+		</select>
+	</div>
+	<div class="list-group">
+		<button type="button" class="btn btn-primary" ng-click="addParameter()">添加参数</button>
+	</div>
+	<div ng-repeat="parameter in ele.parameters" class="list-group">
+		<div class="col-md-3">
+			<label>参数名称</label><input type="text" ng-model="parameter.name" class="form-control" placeholder="key">
+		</div>
+		<div class="col-md-3">
+			<label>参数值</label><input type="text" ng-model="parameter.value" class="form-control" placeholder="value">
+		</div>
+		<div class="col-md-5">
+			<label>说明</label><input type="text" ng-model="parameter.note" class="form-control" placeholder="int类型">
+		</div>
+		<div class="col-md-1">
+			<label>删除</label><button type="button" class="btn btn-sm btn-danger form-control" ng-click="removeParameter($index)">删除</button>
+		</div>
+	</div>
+	<div class="list-group">
+		<label for="urlDemo">返回JSON</label>
+		<textarea style="height: 300px;" ng-model="ele.returnJson" class="form-control" name="returnJson" placeholder="{k:v}"></textarea>
+	</div>
+	<button type="button" class="btn btn-sm btn-primary" ng-click="submitForm()" ng-disabled="loading || ele.name == null || ele.name == ''">
+		<span ng-hide="loading">提交</span> <span ng-show="loading">提交中...</span>
+	</button>
+</div>

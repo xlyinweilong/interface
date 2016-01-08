@@ -31,7 +31,7 @@ public class User {
 	// 用户密码
 	private String passwd;
 	// 用户的accessToken
-	@Indexed(unique = true)
+	@Indexed(unique = false)
 	private String accessToken;
 	// 用户密钥
 	private String security;
@@ -39,8 +39,6 @@ public class User {
 	private String roleId;
 	// 用户类型
 	private final String type = UserType.USER.name();
-	// 删除标记
-	private boolean deleted = false;
 
 	public String getId() {
 		return id;
@@ -108,14 +106,6 @@ public class User {
 
 	public String getType() {
 		return type;
-	}
-
-	public boolean isDeleted() {
-		return deleted;
-	}
-
-	public void setDeleted(boolean deleted) {
-		this.deleted = deleted;
 	}
 
 }

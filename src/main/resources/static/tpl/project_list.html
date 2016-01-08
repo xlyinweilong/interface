@@ -1,8 +1,8 @@
-<div ng-controller="UserListCtrl">
-	<h2 class="sub-header">用户管理</h2>
+<div ng-controller="ProjectListCtrl">
+	<h2 class="sub-header">项目管理</h2>
 	<div>
-		<button ng-if="auth.indexOf('AccountRest_user') != -1" type="button" class="btn btn-primary" ng-click="add()" ng-disabled="list == null || loading">新建</button>
-		<button ng-if="auth.indexOf('AccountRest_userDeleted') != -1" type="button" class="btn btn-danger" ng-click="deleteEles()" ng-disabled="list == null || loading || totalItems < 1">删除</button>
+		<button ng-if="auth.indexOf('ProjectRest_create') != -1" type="button" class="btn btn-primary" ng-click="add()" ng-disabled="list == null || loading">新建</button>
+		<button ng-if="auth.indexOf('ProjectRest_deleted') != -1" type="button" class="btn btn-danger" ng-click="deleteEles()" ng-disabled="list == null || loading || totalItems < 1">删除</button>
 	</div>
 	<div class="table-responsive">
 		<div class="text-center" ng-show="list == null || loading">加载中...</div>
@@ -14,8 +14,7 @@
 				<tr>
 					<th></th>
 					<th>创建时间</th>
-					<th>账号</th>
-					<th>名字</th>
+					<th>名称</th>
 					<th>操作</th>
 				</tr>
 			</thead>
@@ -23,10 +22,10 @@
 				<tr ng-repeat="ele in list">
 					<td><input type="checkbox" ng-model="ele.checkbox"></td>
 					<td>{{ele.createDate|date:'yyyy-MM-dd'}}</td>
-					<td>{{ele.account}}</td>
 					<td>{{ele.name}}</td>
 					<td>
-						<button ng-if="auth.indexOf('AccountRest_user') != -1 && auth.indexOf('AccountRest_userGet') != -1"  type="button" class="btn btn-warning btn-xs" ng-click="editEle(ele.id)" ng-disabled="loading">修改</button>
+						<button ng-if="auth.indexOf('ProjectRest_update') != -1 && auth.indexOf('ProjectRest_info') != -1" type="button" class="btn btn-warning btn-xs" ng-click="editEle(ele.id)" ng-disabled="loading">修改</button>
+						<button type="button" class="btn btn-success btn-xs" ng-click="chooseEle(ele.id,ele.name)">选择</button>
 					</td>
 				</tr>
 			</tbody>
