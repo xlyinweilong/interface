@@ -293,6 +293,12 @@ app.controller('InterfaceListCtrl', function($scope, $http, $state, $modal, $coo
 		});
 	}
 
+	$scope.showEle = function(id) {
+		$state.go('app.interface_info', {
+			id : id
+		});
+	}
+
 	$scope.deleteEles = function() {
 		var checkeds = [];
 		for (var i = 0; i < $scope.list.length; i++) {
@@ -355,7 +361,7 @@ app.controller('InterfaceCtrl', function($scope, $http, $state, $modal, $statePa
 				}
 			} else {
 				$scope.ele = responseData.data;
-				if($scope.ele.parameters == null){
+				if ($scope.ele.parameters == null) {
 					$scope.ele.parameters = [];
 				}
 			}
@@ -412,6 +418,54 @@ app.controller('InterfaceCtrl', function($scope, $http, $state, $modal, $statePa
 				$scope.loading = false;
 			});
 		}
+	}
+
+});
+
+app.controller('InterfaceInfoCtrl', function($scope, $http, $state, $modal, $stateParams, $cookies) {
+	$scope.ele = {
+		id : null,
+		methodType : "GET",
+		consumption : "APPLICATION_FORM_URLENCODED",
+		parameters : []
+	};
+	$scope.loading = false;
+	$scope.eleId = $stateParams.id;
+	$scope.getInfo = function() {
+		$scope.loading = true;
+		$http.get("/interface/info/" + $scope.eleId).success(function(responseData) {
+			if (responseData.success !== 1) {
+				$.scojs_message(responseData.msg, $.scojs_message.TYPE_ERROR);
+				if (responseData.success == -1) {
+					$state.go('signin');
+				}
+			} else {
+				$scope.ele = responseData.data;
+				if ($scope.ele.parameters == null) {
+					$scope.ele.parameters = [];
+				}
+			}
+			$scope.loading = false;
+		});
+	};
+
+	$scope.getInfo();
+
+	$scope.submitForm = function() {
+		$scope.loading = true;
+		$http.post("/interface/test/" + $scope.ele.id).success(function(responseData) {
+			if (responseData.success !== 1) {
+				$.scojs_message(responseData.msg, $.scojs_message.TYPE_ERROR);
+				if (responseData.success == -1) {
+					$state.go('signin');
+				}
+			} else {
+				$scope.ele = responseData.data;
+				$.scojs_message(responseData.msg, $.scojs_message.TYPE_OK);
+				$tab = 'back';
+			}
+			$scope.loading = false;
+		});
 	}
 
 });

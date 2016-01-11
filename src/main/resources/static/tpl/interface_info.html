@@ -1,0 +1,38 @@
+<div ng-controller="InterfaceInfoCtrl">
+	<h2 class="sub-header">接口详情</h2>
+	<div class="list-group">
+		<label>名称</label><span class="form-control">{{ele.name}}</span>
+	</div>
+	<div class="list-group">
+		<label>资源路径</label><span class="form-control">{{ele.url}}</span>
+	</div>
+	<div class="list-group">
+		<label>方式</label> <span class="form-control">{{ele.methodType}}</span>
+	</div>
+	<div class="list-group" ng-show="ele.methodType == 'POST' || ele.methodType == 'PUT'">
+		<label>消费格式</label> <span class="form-control">{{ele.consumption}}</span>
+	</div>
+	<div class="list-group" ng-repeat="parameter in ele.parameters"  style="height: 55px;">
+		<div class="col-md-3">
+			<label>参数名称</label><span class="form-control">{{parameter.name}}</span>
+		</div>
+		<div class="col-md-3">
+			<label>参数值</label><span class="form-control">{{parameter.value}}</span>
+		</div>
+		<div class="col-md-6">
+			<label>说明</label><span class="form-control">{{parameter.note}}</span>
+		</div>
+	</div>
+	<div class="list-group">
+	<label>返回JSON</label>
+		<ul class="nav nav-tabs" ng-init="tab = 'demo'">
+			<li role="presentation" ng-class="{active:tab == 'demo'}"><a ng-click="tab = 'demo'" style="cursor:pointer;">例子返回</a></li>
+			<li role="presentation" ng-class="{active:tab == 'back'}"><a ng-click="tab = 'back'" style="cursor:pointer;">请求返回</a></li>
+		</ul>
+		<textarea ng-show="tab == 'demo'" style="height: 300px;" ng-model="ele.returnJson" class="form-control" name="returnJson" placeholder="{k:v}"></textarea>
+		<textarea ng-show="tab == 'back'" style="height: 300px;" ng-model="backedJson" class="form-control" name="backedJson" placeholder="{k:v}"></textarea>
+	</div>
+	<button type="button" class="btn btn-sm btn-primary" ng-click="submitForm()" ng-disabled="loading">
+		<span ng-hide="loading">测试</span> <span ng-show="loading">测试中...</span>
+	</button>
+</div>
